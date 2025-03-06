@@ -1,0 +1,105 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                template="../templates/template.xhtml">
+    <ui:define name="head">
+        <title>Perfil</title>
+    </ui:define>
+    <ui:define name="content">
+        <h1 class="text-2xl font-bold">Perfil do Usuário</h1>
+
+        <h:form id="frm" styleClass="flex flex-col items-center" enctype="multipart/form-data">
+            <div class="w-[500px] rounded-lg mt-6 flex flex-col justify-center gap-2">
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">Informações do Usuário</h3>
+
+                <!-- Foto -->
+                <div class="mt-4 flex flex-col items-center justify-center">
+                    <h:graphicImage width="80" height="80" styleClass="rounded-full h-[80px] "
+                                    rendered="#{profileBacking.userLogged.archive.id != null}"
+                                    url="#{profileBacking.userLogged.archive.base64}"/>
+                    <h:graphicImage width="80" height="80" styleClass="rounded-full h-[80px]"
+                                    rendered="#{profileBacking.userLogged.archive.id == null}"
+                                    name="img/no-profile.jpg"/>
+
+                    <h:panelGroup layout="block" styleClass="mt-4 flex justify-center items-center">
+
+                        <h:inputFile accept="image/*"
+                                     styleClass="cursor-pointer border-2 border-green-600 text-green px-4 py-2 rounded-md hover:bg-green-700 hover:text-white transition"
+                                     id="uploadPet" value="#{profileBacking.file}">
+                            <f:ajax event="change" execute="@this"/>
+                        </h:inputFile>
+
+                        <h:commandButton id="filePet" value="Salvar Imagem" accept="image/*" converter=""
+                                         action="#{profileBacking.uploadArchiveUser()}"
+                                         styleClass="ml-4 text-sm h-9 bg-green-800 text-white p-2 rounded-md hover:bg-green-700 transition">
+                            <f:ajax event="click" execute="@from" render="@form"/>
+                        </h:commandButton>
+
+                    </h:panelGroup>
+                </div>
+
+                <!-- Nome -->
+                <div class="mt-4">
+                    <h:outputLabel class="block text-sm font-medium text-gray-700" value="Nome"/>
+                    <h:inputText value="#{profileBacking.user.name}" pt:placeholder="Digite seu nome"
+                                 class="text-sm outline-none mt-1 block w-full h-9 rounded-md border border-gray-300 p-2 text-gray-900 focus:border-green-500 focus:ring-indigo-500"/>
+                </div>
+
+                <!-- CPF -->
+                <div class="mt-4">
+                    <h:outputLabel class="block text-sm font-medium text-gray-700" value="CPF"/>
+                    <h:inputText value="#{profileBacking.user.cpf}"
+                                 pt:onfocus="$(this).inputmask({mask: '999.999.999-99',inputmode: 'text'})"
+                                 pt:placeholder="Digite seu CPF"
+                                 class="text-sm outline-none mt-1 block w-full h-9 rounded-md border border-gray-300 p-2 text-gray-900 focus:border-green-500 focus:ring-indigo-500"/>
+                </div>
+
+                <!-- Criando em -->
+                <div class="mt-4">
+                    <h:outputLabel class="block text-sm font-medium text-gray-700" value="Entrou em"/>
+                    <h:outputText disabled="true" value="#{profileBacking.userLogged.createdAt}"
+                                  converter="localDateTimeConverter"
+                                  class="text-sm outline-none mt-1 block w-full h-9 rounded-md border border-gray-300 p-2 text-gray-900 focus:border-green-500 focus:ring-indigo-500"/>
+                </div>
+
+                <!-- Botão de busca -->
+                <div class="mt-4 text-right">
+                    <h:commandButton value="Salvar" action="#{profileBacking.actionEditUser()}"
+                                     styleClass="bg-green-800 text-white px-4 py-2 rounded-lg hover:bg-green-600">
+                    </h:commandButton>
+                </div>
+            </div>
+
+            <div class="w-[500px] rounded-lg mt-10 flex flex-col justify-center gap-2">
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">Segurança da Conta</h3>
+
+                <!-- Senha antiga -->
+                <div class="mt-4">
+                    <h:outputLabel class="block text-sm font-medium text-gray-700" value="Senha Atual"/>
+                    <h:inputSecret value="#{profileBacking.recoverPassword.oldPassword}"
+                                   pt:placeholder="Digite sua senha atual"
+                                   class="text-sm outline-none mt-1 block w-full h-9 rounded-md border border-gray-300 p-2 text-gray-900 focus:border-green-500 focus:ring-indigo-500"/>
+                </div>
+
+                <!-- Senha nova -->
+                <div class="mt-4">
+                    <h:outputLabel class="block text-sm font-medium text-gray-700" value="Nova Senha"/>
+                    <h:inputSecret value="#{profileBacking.recoverPassword.newPassword}"
+                                   pt:placeholder="Digite sua senha nova"
+                                   class="text-sm outline-none mt-1 block w-full h-9 rounded-md border border-gray-300 p-2 text-gray-900 focus:border-green-500 focus:ring-indigo-500"/>
+                </div>
+
+                <!-- Botão de busca -->
+                <div class="mt-4 text-right">
+                    <h:commandButton value="Trocar de Senha" action="#{profileBacking.actionRecoverPassword()}"
+                                     styleClass="bg-green-800 text-white px-4 py-2 rounded-lg hover:bg-green-600">
+                    </h:commandButton>
+                </div>
+            </div>
+
+        </h:form>
+
+    </ui:define>
+</ui:composition>

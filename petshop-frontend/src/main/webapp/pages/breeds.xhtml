@@ -1,0 +1,109 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                template="../templates/template.xhtml">
+    <ui:define name="head">
+        <title>Raças</title>
+    </ui:define>
+    <ui:define name="content">
+        <h1 class="text-2xl font-bold">Raças</h1>
+
+        <h:form id="frm">
+            <div class="flex w-full h-screen justify-between gap-4 mt-2">
+                <h:panelGroup id="createBreeds" layout="block" styleClass="w-[30%] h-[100%]">
+
+                    <h:outputText value="#{breedBacking.breed.id == null ? 'Cadastrar' : 'Atualizar'} Raça"
+                                  class="text-1xl font-medium mt-3"/>
+
+                    <!-- Nome -->
+                    <div>
+                        <h:outputLabel for="name" styleClass="block text-sm font-medium text-gray-600 mb-1 mt-4"
+                                       value="Nome"/>
+                        <h:inputText maxlength="200" id="name" value="#{breedBacking.breed.name}"
+                                     styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none"
+                                     pt:placeholder="Digite o nome"/>
+                    </div>
+
+                    <!-- Descrição -->
+                    <div>
+                        <h:outputLabel styleClass="block text-sm font-medium text-gray-600 mb-1 mt-4"
+                                       value="Descrição"/>
+                        <h:inputTextarea rows="10" id="desc" value="#{breedBacking.breed.description}"
+                                         styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none"
+                                         pt:placeholder="Digite uma descrição"/>
+                    </div>
+
+                    <div class="mt-6">
+                        <h:commandButton value="#{breedBacking.breed.id == null ? 'Salvar' : 'Atualizar'}"
+                                         action="#{breedBacking.actionSaveBreed()}"
+                                         class="text-sm w-full h-9 bg-green-800 text-white py-2 rounded-md hover:bg-green-700 transition">
+                        </h:commandButton>
+                    </div>
+                </h:panelGroup>
+
+                <div class="w-[70%] h-[100%]">
+                    <h:dataTable id="listBreeds" value="#{breedBacking.listBreeds}" var="breed"
+                                 styleClass="w-full border border-gray-300 rounded-300 mt-2">
+                        <f:facet name="header">
+                            <h3 class="py-2 border-b border-gray-300">Listagem de Raças</h3>
+                        </f:facet>
+
+                        <h:column>
+                            <f:facet name="header">
+                                <div class="px-4 py-2 border-b border-gray-300">
+                                    <h:outputText styleClass="text-gray-700 text-[14px]" value="Nome"/>
+                                </div>
+                            </f:facet>
+
+                            <h:outputText styleClass="px-4 py-2 text-gray-600 text-[12px]" value="#{breed.name}"/>
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">
+                                <div class="px-4 py-2 border-b border-gray-300">
+                                    <h:outputText styleClass="text-gray-700 text-[14px]" value="Descrição"/>
+                                </div>
+                            </f:facet>
+
+                            <h:outputText styleClass="px-4 py-2 text-gray-600 text-[12px] max-w-[350px] line-clamp-2"
+                                          value="#{breed.description}"/>
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">
+                                <div class="px-4 py-2 border-b border-gray-300">
+                                    <h:outputText styleClass="text-gray-700 text-[14px]" value="Ações"/>
+                                </div>
+                            </f:facet>
+
+                            <div class="px-4 py-2 text-center">
+                                <h:commandButton value="Editar" action="#{breedBacking.setBreedEdit(breed)}"
+                                                 styleClass="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-2">
+                                    <f:ajax event="click" execute="@this" render="frm:listBreeds"/>
+                                </h:commandButton>
+
+                                <h:commandButton value="Excluir" action="#{breedBacking.setBreedDelete(breed)}"
+                                                 styleClass="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+                                    <f:ajax event="click" execute="@this" render="@form"/>
+                                </h:commandButton>
+                            </div>
+                        </h:column>
+
+                    </h:dataTable>
+                </div>
+            </div>
+
+            <p:dialog header="Atenção" id="deleteBreeds" widgetVar="deleteBreeds" minHeight="40" width="350"
+                      showEffect="fade" modal="true" closeOnEscape="true">
+                <h:outputText value="Deseja deletar a raça do sistema?"/>
+                <h:commandButton value="Sim, deletar" action="#{breedBacking.actionDeleteBreed()}"
+                                 styleClass="text-sm h-9 bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition mt-4">
+                    <f:ajax event="click" execute="@this" render="@form"/>
+                </h:commandButton>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+</ui:composition>

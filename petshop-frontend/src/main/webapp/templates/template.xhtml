@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+    <!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" type="text/javascript"></script>-->
+    <script src="https://cdn.jsdelivr.net/gh/RobinHerbots/Inputmask@5.x/dist/jquery.inputmask.js"
+            type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"
+            type="text/javascript"></script>
+    <!--    <script src="https://cdn.jsdelivr.net/npm/driver.js@latest/dist/driver.js.iife.js" type="text/javascript"></script>-->
+    <!--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@latest/dist/driver.css"/>-->
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;family=Italianno&amp;display=swap"
+          rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400" rel="stylesheet"/>
+    <h:outputStylesheet name="css/styles.css"/>
+    <ui:insert name="head"></ui:insert>
+</h:head>
+<h:body styleClass="flex">
+    <p:growl id="msgs" life="8000" showDetail="true" keepAlive="true">
+        <p:autoUpdate/>
+    </p:growl>
+
+    <h:form id="frmTemplate">
+        <!-- Sidebar ADMIN -->
+        <h:panelGroup rendered="#{sessionBacking.admin}" layout="block" id="sidebarAdmin"
+                      styleClass="fixed flex flex-col w-64 h-screen text-green-800 border-r border-gray-300 p-4 transition-all">
+            <div class="w-full flex justify-center align-items mb-8">
+                <h:graphicImage width="120" name="img/logo-petshop-2.png"/>
+            </div>
+            <ul class="mt-4 space-y-2">
+                <li>
+                    <h:commandLink action="/pages/home?faces-redirect=true" id="home"
+                                   styleClass="block p-2 rounded hover:bg-green-100 flex align-items-center #{menuBacking.activeMenu('/petshop/pages/home.xhtml') ? 'bg-green-100' : ''}">
+                        <span class="material-symbols-outlined mx-2">home</span>
+                        <h:outputText styleClass="font-medium" value="Home"/>
+                    </h:commandLink>
+                </li>
+
+                <li>
+                    <h:commandLink action="/pages/customers?faces-redirect=true"
+                                   styleClass="block p-2 rounded hover:bg-green-100 flex align-items-center #{menuBacking.activeMenu('/petshop/pages/customers.xhtml') ? 'bg-green-100' : ''}">
+                        <span class="material-symbols-outlined mx-2">group</span>
+                        <h:outputText styleClass="font-medium" value="Clientes"/>
+                    </h:commandLink>
+                </li>
+
+                <li>
+                    <h:commandLink action="/pages/petsCare?faces-redirect=true"
+                                   styleClass="block p-2 rounded hover:bg-green-100 flex align-items-center #{menuBacking.activeMenu('/petshop/pages/petsCare.xhtml') ? 'bg-green-100' : ''}">
+                        <span class="material-symbols-outlined mx-2">pets</span>
+                        <h:outputText styleClass="font-medium" value="Atendimentos"/>
+                    </h:commandLink>
+                </li>
+
+                <li>
+                    <h:commandLink action="/pages/contacts?faces-redirect=true"
+                                   styleClass="block p-2 rounded hover:bg-green-100 flex align-items-center #{menuBacking.activeMenu('/petshop/pages/contacts.xhtml') ? 'bg-green-100' : ''}">
+                        <span class="material-symbols-outlined mx-2">support_agent</span>
+                        <h:outputText styleClass="font-medium" value="Contatos"/>
+                    </h:commandLink>
+                </li>
+
+                <li>
+                    <h:commandLink action="/pages/breeds?faces-redirect=true"
+                                   styleClass="block p-2 rounded hover:bg-green-100 flex align-items-center #{menuBacking.activeMenu('/petshop/pages/breeds.xhtml') ? 'bg-green-100' : ''}">
+                        <span class="material-symbols-outlined mx-2">pet_supplies</span>
+                        <h:outputText styleClass="font-medium" value="Raças"/>
+                    </h:commandLink>
+                </li>
+            </ul>
+            <!-- Menu Inferior (Sair) -->
+            <div class="mt-auto p-4 border-t border-gray-300">
+                <div class="block p-2 rounded hover:bg-green-100 flex align-items-center relative cursor-pointer">
+                    <span class="material-symbols-outlined mx-2">logout</span>
+                    <h:outputText styleClass="font-medium" value="Sair"/>
+                    <h:commandButton action="#{logoutBacking.logout()}" styleClass="absolute w-full cursor-pointer"/>
+                </div>
+            </div>
+        </h:panelGroup>
+
+        <!-- Sidebar CUSTOMER -->
+        <h:panelGroup rendered="#{sessionBacking.customer}" layout="block" id="sidebarCustomer"
+                      styleClass="fixed flex flex-col w-64 h-screen text-green-800 border-r border-gray-300 p-4 transition-all">
+            <div class="w-full flex justify-center align-items mb-8">
+                <h:graphicImage width="120" name="img/logo-petshop-2.png"/>
+            </div>
+            <ul class="mt-4 space-y-2">
+                <li>
+                    <h:commandLink action="/pages/home?faces-redirect=true"
+                                   styleClass="block p-2 rounded hover:bg-green-100 flex align-items-center #{menuBacking.activeMenu('/petshop/pages/home.xhtml') ? 'bg-green-100' : ''}">
+                        <span class="material-symbols-outlined mx-2">home</span>
+                        <h:outputText styleClass="font-medium" value="Home"/>
+                    </h:commandLink>
+                </li>
+
+                <li>
+                    <h:commandLink action="/pages/petsCare?faces-redirect=true"
+                                   styleClass="block p-2 rounded hover:bg-green-100 flex align-items-center #{menuBacking.activeMenu('/petshop/pages/petsCare.xhtml') ? 'bg-green-100' : ''}">
+                        <span class="material-symbols-outlined mx-2">pets</span>
+                        <h:outputText styleClass="font-medium" value="Meus atendimentos"/>
+                    </h:commandLink>
+                </li>
+
+                <li>
+                    <h:commandLink action="/pages/contacts?faces-redirect=true"
+                                   styleClass="block p-2 rounded hover:bg-green-100 flex align-items-center #{menuBacking.activeMenu('/petshop/pages/contacts.xhtml') ? 'bg-green-100' : ''}">
+                        <span class="material-symbols-outlined mx-2">support_agent</span>
+                        <h:outputText styleClass="font-medium" value="Meus contatos"/>
+                    </h:commandLink>
+                </li>
+
+                <li>
+                    <h:commandLink action="/pages/pets?faces-redirect=true"
+                                   styleClass="block p-2 rounded hover:bg-green-100 flex align-items-center #{menuBacking.activeMenu('/petshop/pages/pets.xhtml') ? 'bg-green-100' : ''}">
+                        <span class="material-symbols-outlined mx-2">sound_detection_dog_barking</span>
+                        <h:outputText styleClass="font-medium" value="Meus animais"/>
+                    </h:commandLink>
+                </li>
+
+                <li>
+                    <h:commandLink action="/pages/addresses?faces-redirect=true"
+                                   styleClass="block p-2 rounded hover:bg-green-100 flex align-items-center #{menuBacking.activeMenu('/petshop/pages/addresses.xhtml') ? 'bg-green-100' : ''}">
+                        <span class="material-symbols-outlined mx-2">meeting_room</span>
+                        <h:outputText styleClass="font-medium" value="Endereços"/>
+                    </h:commandLink>
+                </li>
+
+            </ul>
+            <!-- Menu Inferior (Sair) -->
+            <div class="mt-auto p-4 border-t border-gray-300">
+                <h:commandLink action="#{logoutBacking.logout()}"
+                               styleClass="block p-2 rounded hover:bg-green-100 flex align-items-center">
+                    <span class="material-symbols-outlined mx-2">logout</span>
+                    <h:outputText styleClass="font-medium" value="Sair"/>
+                </h:commandLink>
+            </div>
+        </h:panelGroup>
+    </h:form>
+
+    <!-- Conteúdo principal -->
+    <div class="flex-1 ml-[255px]">
+        <h:form styleClass="bg-green-800">
+            <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+                <div class="relative flex h-16 items-center justify-between">
+                    <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+                        <div class="flex shrink-0 items-center">
+                            <h:outputText styleClass="text-white" value="Pet Shop - Metaway"/>
+                        </div>
+                    </div>
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                        <!-- Profile dropdown -->
+                        <div class="relative ml-3">
+                            <div>
+                                <button type="button"
+                                        class="relative flex rounded-full bg-gray-800 text-sm focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden"
+                                        id="user-menu-button" onclick="actionMenu()">
+                                    <span class="absolute -inset-1.5"></span>
+                                    <span class="sr-only">Abrir o menu</span>
+                                    <h:graphicImage width="30" styleClass="size-8 rounded-full"
+                                                    rendered="#{profileBacking.userLogged.archive.id != null}"
+                                                    url="#{profileBacking.userLogged.archive.base64Mini}"/>
+
+                                    <h:graphicImage width="30" styleClass="size-8 rounded-full"
+                                                    rendered="#{profileBacking.userLogged.archive.id == null}"
+                                                    name="img/no-profile.jpg"/>
+                                </button>
+                            </div>
+
+                            <div id="menu-dropdown"
+                                 class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 ring-1 shadow-lg ring-black/5 focus:outline-hidden hidden">
+
+                                <h:commandLink action="/pages/profile?faces-redirect=true"
+                                        value="Perfil" class="block px-4 py-2 text-sm text-gray-700"
+                                        tabindex="-1"
+                                        id="user-menu-item-0"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+        <div class="p-6">
+            <ui:insert name="content"></ui:insert>
+        </div>
+    </div>
+    <h:outputScript>
+        function actionMenu() {
+            const userMenu = document.getElementById("menu-dropdown");
+
+            if (userMenu) {
+                userMenu.classList.toggle("hidden");
+            }
+        }
+    </h:outputScript>
+</h:body>
+</html>

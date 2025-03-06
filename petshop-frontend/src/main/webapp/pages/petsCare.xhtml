@@ -1,0 +1,283 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                template="../templates/template.xhtml">
+    <ui:define name="head">
+        <title>Atendimentos</title>
+    </ui:define>
+    <ui:define name="content">
+        <h1 class="text-2xl font-bold">Atendimentos</h1>
+
+        <h:form id="frm">
+            <div class="bg-white p-4 rounded-lg border border-gray-300 mt-6">
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">Buscar Atendimentos</h3>
+
+                <div class="grid grid-cols-4 gap-4">
+
+                    <!-- Cliente -->
+                    <h:panelGroup id="users-contact" rendered="#{sessionBacking.admin}" layout="block">
+                        <h:outputLabel class="block text-sm font-medium text-gray-600" value="Cliente"/>
+                        <h:selectOneMenu maxlength="20" id="cliente" value="#{petsCareBacking.search.customerId}"
+                                         styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none">
+                            <f:selectItem noSelectionOption="true" itemLabel="Selecione"/>
+                            <f:selectItems value="#{petsCareBacking.loadCustomers()}" var="user" itemValue="#{user.id}"
+                                           itemLabel="#{user.name}"/>
+                        </h:selectOneMenu>
+                    </h:panelGroup>
+
+                    <!-- Pet -->
+                    <div>
+                        <h:outputLabel class="block text-sm font-medium text-gray-600" value="Animal"/>
+                        <h:selectOneMenu maxlength="20" id="cpf" value="#{petsCareBacking.search.petId}"
+                                         styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none">
+                            <f:selectItem noSelectionOption="true" itemLabel="Selecione"/>
+                            <f:selectItems value="#{petsCareBacking.pets}" var="pet" itemValue="#{pet.id}"
+                                           itemLabel="#{pet.name}"/>
+                        </h:selectOneMenu>
+                    </div>
+
+                    <!-- Status -->
+                    <div>
+                        <h:outputLabel class="block text-sm font-medium text-gray-600" value="Status"/>
+                        <h:selectOneMenu id="tag" value="#{petsCareBacking.search.status}"
+                                         styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none">
+                            <f:selectItem noSelectionOption="true" itemLabel="Selecione"/>
+                            <f:selectItem itemLabel="Pendente" itemValue="PENDING"/>
+                            <f:selectItem itemLabel="Cancelado" itemValue="CANCELLED"/>
+                            <f:selectItem itemLabel="Completo" itemValue="COMPLETED"/>
+                        </h:selectOneMenu>
+                    </div>
+
+                    <!-- Data de Criação -->
+                    <div>
+                        <h:outputLabel class="block text-sm font-medium text-gray-600" value="Data de Criação Inicial"/>
+                        <h:inputText id="datepick" value="#{petsCareBacking.search.createdAtStart}"
+                                     pt:onfocus="$(this).inputmask({alias: 'datetime',inputFormat: 'dd/MM/yyyy HH:MM',inputmode: 'numeric'})"
+                                     styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none"
+                                     pt:placeholder="dd/MM/yyyy HH:MM"/>
+                    </div>
+
+                    <!-- Data de Criação final -->
+                    <div>
+                        <h:outputLabel class="block text-sm font-medium text-gray-600" value="Data de Criação Final"/>
+                        <h:inputText id="datepick2" value="#{petsCareBacking.search.createdAtEnd}"
+                                     pt:onfocus="$(this).inputmask({alias: 'datetime',inputFormat: 'dd/MM/yyyy HH:MM',inputmode: 'numeric'})"
+                                     styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none"
+                                     pt:placeholder="dd/MM/yyyy HH:MM"/>
+                    </div>
+                </div>
+
+                <!-- Botão de busca -->
+                <div class="mt-4 text-right">
+                    <h:commandButton value="Buscar" action="#{petsCareBacking.searchPetsCare()}"
+                                     styleClass="bg-green-800 text-white px-4 py-2 rounded-lg hover:bg-green-600"/>
+                </div>
+            </div>
+
+            <h:commandButton rendered="#{sessionBacking.admin}" type="button" value="Cadastrar Atendimento"
+                             action="#{petsCareBacking.resetPetsCare()}"
+                             styleClass="mt-6 text-sm h-9 bg-green-800 text-white p-2 rounded-md hover:bg-green-700 transition">
+                <f:ajax execute="@this" resetValues="frm:createPetsCares"/>
+            </h:commandButton>
+
+            <h:dataTable id="listPetsCare" value="#{petsCareBacking.listPetsCare}" var="petCare"
+                         styleClass="w-full border border-gray-300 rounded-300 mt-2">
+
+                <f:facet name="header">
+                    <h3 class="py-2 border-b border-gray-300">Listagem de Atendimentos</h3>
+                </f:facet>
+
+                <h:column>
+                    <f:facet name="header">
+                        <div class="px-4 py-2 border-b border-gray-300">
+                            <h:outputText styleClass="text-gray-700 text-[14px] whitespace-nowrap" value="Foto"/>
+                        </div>
+                    </f:facet>
+                    <div class="px-4 py-2 text-gray-600">
+                        <h:graphicImage width="30" styleClass="rounded-full h-[30px]"
+                                        rendered="#{petCare.pet.archive.id != null}"
+                                        url="#{petCare.pet.archive.base64Mini}"/>
+
+                        <h:graphicImage width="30" styleClass="rounded-full h-[30px]"
+                                        rendered="#{petCare.pet.archive.id == null}"
+                                        name="img/no-profile.jpg"/>
+                    </div>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        <div class="px-4 py-2 border-b border-gray-300">
+                            <h:outputText styleClass="text-gray-700 text-[14px] whitespace-nowrap" value="Nome"/>
+                        </div>
+                    </f:facet>
+
+                    <h:outputText styleClass="px-4 py-2 text-gray-600 text-[12px]" value="#{petCare.pet.name}"/>
+                </h:column>
+
+                <h:column rendered="#{sessionBacking.admin}">
+                    <f:facet name="header">
+                        <div class="px-4 py-2 border-b border-gray-300">
+                            <h:outputText styleClass="text-gray-700 text-[14px] whitespace-nowrap" value="Dono"/>
+                        </div>
+                    </f:facet>
+
+                    <h:outputText styleClass="px-4 py-2 text-gray-600 text-[12px]"
+                                  value="#{petsCareBacking.firstName(petCare.pet.customer.name)}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        <div class="px-4 py-2 border-b border-gray-300">
+                            <h:outputText styleClass="text-gray-700 text-[14px] whitespace-nowrap" value="Status"/>
+                        </div>
+                    </f:facet>
+
+                    <h:outputText
+                            styleClass="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset #{petsCareBacking.getClassStatus(petCare.status)}"
+                            value="#{petsCareBacking.getNameStatus(petCare.status)}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        <div class="px-4 py-2 border-b border-gray-300">
+                            <h:outputText styleClass="text-gray-700 text-[14px] whitespace-nowrap" value="Preço"/>
+                        </div>
+                    </f:facet>
+
+                    <h:outputText styleClass="px-4 py-2 text-gray-600 text-[12px]" value="#{petCare.price}">
+                        <f:convertNumber type="currency" currencySymbol="R$" groupingUsed="true"/>
+                    </h:outputText>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        <div class="px-4 py-2 border-b border-gray-300">
+                            <h:outputText styleClass="text-gray-700 text-[14px] whitespace-nowrap"
+                                          value="Data Agendada"/>
+                        </div>
+                    </f:facet>
+
+                    <h:outputText styleClass="px-4 py-2 text-gray-600 text-[12px]" value="#{petCare.date}"
+                                  converter="localDateTimeConverter"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        <div class="px-4 py-2 border-b border-gray-300">
+                            <h:outputText styleClass="text-gray-700 text-[14px] whitespace-nowrap"
+                                          value="Data de Criação"/>
+                        </div>
+                    </f:facet>
+
+                    <h:outputText styleClass="px-4 py-2 text-gray-600 text-[12px]" value="#{petCare.createdAt}"
+                                  converter="localDateTimeConverter"/>
+                </h:column>
+
+                <h:column rendered="#{sessionBacking.admin}">
+                    <f:facet name="header">
+                        <div class="px-4 py-2 border-b border-gray-300">
+                            <h:outputText styleClass="text-gray-700 text-[14px] whitespace-nowrap" value="Ações"/>
+                        </div>
+                    </f:facet>
+                    <div class="px-4 py-2 flex justify-center">
+                        <h:commandButton value="Editar"
+                                         action="#{petsCareBacking.setPetCareEdit(petCare)}"
+                                         styleClass="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-2">
+                            <f:ajax event="click" execute="@this" render="frm:createPetsCares"/>
+                        </h:commandButton>
+
+                        <h:commandButton value="Excluir"
+                                         action="#{petsCareBacking.setPetCareDelete(petCare)}"
+                                         styleClass="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+                            <f:ajax event="click" execute="@this" render="frm:deletePetsCares"/>
+                        </h:commandButton>
+                    </div>
+                </h:column>
+
+            </h:dataTable>
+
+            <p:dialog
+                    header="#{petsCareBacking.petCare.uuid != null ? 'Editar Atendimento' : 'Cadastrar Atendimento'}"
+                    rendered="#{sessionBacking.admin}"
+                    id="createPetsCares" widgetVar="createPetsCares" minHeight="60" width="650" showEffect="fade"
+                    modal="true" closeOnEscape="true">
+
+                <!-- Pet -->
+                <div class="mt-4">
+                    <h:outputLabel class="block text-sm font-medium text-gray-600 mb-1 mt-4" value="Animal" />
+                    <h:selectOneMenu maxlength="20" id="pet" value="#{petsCareBacking.petCare.petId}"
+                                     styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none">
+                        <f:selectItem noSelectionOption="true" itemLabel="Selecione"/>
+                        <f:selectItems value="#{petsCareBacking.pets}" var="pet" itemValue="#{pet.id}"
+                                       itemLabel="#{pet.name}"/>
+                    </h:selectOneMenu>
+                </div>
+
+                <!-- Preço -->
+                <div class="mt-4">
+                    <h:outputLabel class="block text-sm font-medium text-gray-600 mb-1 mt-4" value="Preço" />
+                    <h:inputText maxlength="200" id="price" type="number"
+                                 pt:onfocus="$(this).mask('000.000.000,00', {reverse: true});"
+                                 value="#{petsCareBacking.petCare.price}"
+                                 styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none"
+                                 pt:placeholder="Digite o preço" converter="bigDecimalConverter"/>
+                </div>
+
+                <!-- Criação -->
+                <div class="mt-4">
+                    <h:outputLabel class="block text-sm font-medium text-gray-600 mb-1 mt-4" value="Data do Agendamento" />
+                    <h:inputText id="datepick3" value="#{petsCareBacking.petCare.date}"
+                                 pt:onfocus="$(this).inputmask({alias: 'datetime',inputFormat: 'dd/MM/yyyy HH:MM',inputmode: 'numeric'})"
+                                 converter="localDateTimeConverter"
+                                 styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none"
+                                 pt:placeholder="dd/MM/yyyy HH:mm"/>
+                </div>
+
+                <!-- Status -->
+                <div>
+                    <h:outputLabel class="block text-sm font-medium text-gray-600 mb-1 mt-4" value="Status" />
+                    <h:selectOneMenu id="status" value="#{petsCareBacking.petCare.status}"
+                                     styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none">
+                        <f:selectItem noSelectionOption="true" itemLabel="Selecione"/>
+                        <f:selectItem itemLabel="Pendente" itemValue="PENDING"/>
+                        <f:selectItem itemLabel="Cancelado" itemValue="CANCELLED"/>
+                        <f:selectItem itemLabel="Completo" itemValue="COMPLETED"/>
+                    </h:selectOneMenu>
+                </div>
+
+                <!-- Descrição -->
+                <div class="mt-4">
+                    <h:outputLabel class="block text-sm font-medium text-gray-600 mb-1 mt-4" value="Descrição" />
+                    <h:inputTextarea id="description" value="#{petsCareBacking.petCare.description}"
+                                     styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none"
+                                     pt:placeholder="Digite uma descrição"/>
+                </div>
+
+                <!-- Botão Salvar -->
+                <div class="mt-6">
+                    <h:commandButton value="#{petsCareBacking.petCare.uuid != null ? 'Atualizar' : 'Cadastrar'}"
+                                     action="#{petsCareBacking.actionSavePetCare()}"
+                                     styleClass="text-sm w-full h-9 bg-green-800 text-white py-2 rounded-md hover:bg-green-700 transition">
+                    </h:commandButton>
+                </div>
+            </p:dialog>
+
+            <p:dialog header="Atenção" id="deletePetsCares" widgetVar="deletePetsCares" minHeight="40" width="350"
+                      showEffect="fade" modal="true" closeOnEscape="true">
+
+                <h:outputText value="Deseja deletar o contato do sistema?"/>
+
+                <h:commandButton value="Sim, deletar" action="#{petsCareBacking.actionDeletePetCare()}"
+                                 styleClass="text-sm h-9 bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition mt-4">
+                    <f:ajax event="click" execute="@this" render="@form"/>
+                </h:commandButton>
+
+            </p:dialog>
+
+        </h:form>
+
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <script src="https://cdn.tailwindcss.com"  type="text/javascript"/>
+    <script src="https://cdn.jsdelivr.net/gh/RobinHerbots/Inputmask@5.x/dist/jquery.inputmask.js"
+            type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"
+            type="text/javascript"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;family=Italianno&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400" rel="stylesheet" />
+    <h:outputStylesheet name="css/styles.css" />
+    <title>Login</title>
+</h:head>
+
+<h:body class="s-login">
+
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{loginBacking.onLoad()}" />
+    </f:metadata>
+
+    <p:growl id="msgs" life="8000" showDetail="true" keepAlive="true">
+        <p:autoUpdate />
+    </p:growl>
+
+    <h:form class="px-12 w-full max-w-md form">
+        <div class="w-full flex justify-center align-items mb-8">
+            <h:graphicImage width="80" name="img/logo-petshop.png" />
+        </div>
+
+        <h2 class="text-2xl font-medium text-center text-gray-900">Bem-vindo(a) de Volta</h2>
+
+        <!-- CPF -->
+        <div class="mt-4">
+            <h:outputLabel for="cpf-jsf" class="block text-sm font-medium text-gray-700" value="CPF" />
+            <h:inputText value="#{loginBacking.request.cpf}" id="cpf-jsf" pt:placeholder="Digite seu CPF"
+                         autocomplete="cpf-jsf" pt:onfocus="$(this).inputmask({mask: '999.999.999-99',inputmode: 'text'})"
+                         class="text-sm outline-none mt-1 block w-full h-9 rounded-md border border-gray-300 p-2 text-gray-900 focus:border-green-500 focus:ring-indigo-500"
+                         placeholder="Digite seu CPF" />
+        </div>
+
+        <!-- Senha -->
+        <div class="mt-4">
+            <h:outputLabel for="cpf-jsf" class="block text-sm font-medium text-gray-700" value="Senha" />
+            <h:inputSecret value="#{loginBacking.request.password}" id="pass-jsf" pt:placeholder="Digite sua senha" autocomplete="pass-jsf"
+                           class="text-sm outline-none mt-1 block w-full h-9 rounded-md border border-gray-300 p-2 text-gray-900 focus:border-green-500 focus:ring-green-500"
+                           placeholder="Digite sua senha" />
+        </div>
+
+        <!-- Botão Entrar -->
+        <div class="mt-6">
+            <h:commandButton value="Entrar" action="#{loginBacking.actionLogin()}"
+                             class="text-sm w-full h-9 bg-green-800 text-white py-2 rounded-md hover:bg-green-700 transition" />
+        </div>
+
+        <p class="text-center text-sm text-gray-600 mt-4">
+            Não tem conta?
+            <h:commandLink action="register?faces-redirect=true" styleClass="text-green-800 underline" value="Cadastre-se"/>
+        </p>
+        <small class="w-full text-xs justify-center flex align-items mt-8">Powered by <h:graphicImage styleClass="w-12" name="img/logo-metaway.png" /> </small>
+    </h:form>
+    <div class="h-screen w-full p-5 image">
+        <div class="w-full bg-green-800 rounded-xl info"></div>
+    </div>
+</h:body>
+</html>

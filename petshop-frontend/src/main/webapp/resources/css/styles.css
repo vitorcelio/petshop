@@ -1,0 +1,24 @@
+* {
+    font-family: "Inter", serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+}
+
+.s-login {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.s-login .image .info {
+    height: 95vh !important;
+    background-image:  url("#{resource['img/img-login.jpg']}");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.rounded-full {
+    object-fit: cover !important;
+}

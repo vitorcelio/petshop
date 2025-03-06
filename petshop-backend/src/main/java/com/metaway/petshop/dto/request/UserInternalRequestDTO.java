@@ -1,0 +1,47 @@
+package com.metaway.petshop.dto.request;
+
+import com.metaway.petshop.models.User;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.br.CPF;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class UserInternalRequestDTO {
+
+    @NotBlank(message = "O CPF é obrigatório.")
+    @CPF(message = "O CPF está inválido.")
+    private String cpf;
+
+    @NotBlank(message = "O nome é obrigatório.")
+    private String name;
+
+    @Size(min = 5, message = "O tamanho mínimo da senha deve ser de 5 caracteres.")
+    @NotBlank(message = "A senha é obrigatória")
+    private String password;
+
+    @NotNull(message = "A ativação/desativação de usuário é obrigatória.")
+    private boolean enabled;
+
+    @NotNull(message = "O perfil de usuário é obrigatório.")
+    private Integer roleId;
+
+    public User toUser() {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+        return User.builder()
+                .cpf(cpf)
+                .name(name)
+                .password(encoder.encode(password))
+                .enabled(enabled)
+                .roleId(roleId)
+                .build();
+    }
+
+}

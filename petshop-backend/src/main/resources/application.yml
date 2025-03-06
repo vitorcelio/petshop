@@ -1,0 +1,26 @@
+# Configura??es da Aplica??o Back-end do PetShop
+server:
+  port: ${PORT:8081}
+
+
+spring:
+  application:
+    name: PetShop Metaway
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:petshop_metaway}
+    driver-class-name: org.postgresql.Driver
+
+
+jwt:
+  secret: QXBsaWNhw6fDo28gcGFyYSBhIG1ldGF3YXkgKFRlc3RlKSAtIFBldFNob3A=
+

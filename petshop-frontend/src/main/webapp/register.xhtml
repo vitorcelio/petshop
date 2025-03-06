@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <script src="https://cdn.tailwindcss.com"  type="text/javascript"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;family=Italianno&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400" rel="stylesheet" />
+    <h:outputStylesheet name="css/styles.css" />
+    <title>Login</title>
+</h:head>
+
+<h:body class="s-login">
+    <p:growl id="msgs" life="8000" showDetail="true" keepAlive="true">
+        <p:autoUpdate />
+    </p:growl>
+    <h:form id="frm" class="px-12 w-full max-w-md">
+        <div class="w-full flex justify-center align-items mb-8">
+            <h:graphicImage width="80" name="img/logo-petshop.png" />
+        </div>
+
+        <h2 class="text-1xl font-medium text-center text-gray-900">Cadastre-se: Facilite o atendimento do seu pet.</h2>
+
+        <!-- Nome Completo -->
+        <div class="mt-4">
+            <h:outputLabel for="cpf-jsf" class="block text-sm font-medium text-gray-700" value="Nome" />
+            <h:inputText id="name-jsf" value="#{registerBacking.user.name}"
+                         pt:placeholder="Digite seu nome completo" autocomplete="name-jsf"
+                         class="text-sm outline-none mt-1 block w-full h-9 rounded-md border border-gray-300 p-2 text-gray-900 focus:border-green-500 focus:ring-indigo-500"
+                         placeholder="Digite seu Nome" />
+        </div>
+
+        <!-- CPF -->
+        <div class="mt-4">
+            <h:outputLabel for="cpf-jsf" class="block text-sm font-medium text-gray-700" value="CPF" />
+            <h:inputText id="cpf-jsf" value="#{registerBacking.user.cpf}" pt:onfocus="$(this).inputmask({mask: '999.999.999-99',inputmode: 'text'})"
+                         pt:placeholder="Digite seu CPF" autocomplete="cpf-jsf"
+                         class="text-sm outline-none mt-1 block w-full h-9 rounded-md border border-gray-300 p-2 text-gray-900 focus:border-green-500 focus:ring-indigo-500"
+                         placeholder="Digite seu CPF" />
+        </div>
+
+        <!-- Senha -->
+        <div class="mt-4">
+            <h:outputLabel for="cpf-jsf" class="block text-sm font-medium text-gray-700" value="Senha" />
+            <h:inputSecret id="pass-jsf" value="#{registerBacking.user.password}"
+                           pt:placeholder="Digite sua senha" autocomplete="pass-jsf"
+                           class="text-sm outline-none mt-1 block w-full h-9 rounded-md border border-gray-300 p-2 text-gray-900 focus:border-green-500 focus:ring-green-500"
+                           placeholder="Digite sua senha" />
+        </div>
+
+        <!-- Repetir Senha -->
+        <div class="mt-4">
+            <h:outputLabel for="cpf-jsf" class="block text-sm font-medium text-gray-700" value="Confirmar Senha" />
+            <h:inputSecret id="repeatPass-jsf" value="#{registerBacking.user.repeatPassword}"
+                           pt:placeholder="Digite sua senha" autocomplete="repeat-pass-jsf"
+                           class="text-sm outline-none mt-1 block w-full h-9 rounded-md border border-gray-300 p-2 text-gray-900 focus:border-green-500 focus:ring-green-500"
+                           placeholder="Digite sua senha novamente" />
+        </div>
+
+        <!-- Botão Cadastrar -->
+        <div class="mt-6">
+            <h:commandButton value="Cadastrar" action="#{registerBacking.actionRegister()}"
+                             class="text-sm w-full h-9 bg-green-800 text-white py-2 rounded-md hover:bg-green-700 transition" />
+        </div>
+
+        <p class="text-center text-sm text-gray-600 mt-4">
+            Tem uma conta?
+            <h:commandLink action="login?faces-redirect=true" styleClass="text-green-800 underline" value="Entrar"/>
+        </p>
+        <small class="w-full text-xs justify-center flex align-items mt-8">Powered by <h:graphicImage styleClass="w-12" name="img/logo-metaway.png" /> </small>
+    </h:form>
+    <div class="h-screen w-full p-5 image">
+        <div class="w-full bg-green-800 rounded-xl info"></div>
+    </div>
+</h:body>
+</html>

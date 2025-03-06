@@ -1,0 +1,290 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                template="../templates/template.xhtml">
+    <ui:define name="head">
+        <title>Contatos</title>
+    </ui:define>
+    <ui:define name="content">
+        <h1 class="text-2xl font-bold">Contatos</h1>
+
+        <h:form id="frm">
+            <div class="bg-white p-4 rounded-lg border border-gray-300 mt-6">
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">Buscar Contatos</h3>
+
+                <div class="grid grid-cols-4 gap-4">
+
+                    <!-- Cliente -->
+                    <h:panelGroup id="users-contact" rendered="#{sessionBacking.admin}" layout="block">
+                        <h:outputLabel class="block text-sm font-medium text-gray-600" value="Cliente" />
+                        <h:selectOneMenu maxlength="20" id="cpf" value="#{contactBacking.search.customerId}"
+                                         styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none">
+                            <f:selectItem noSelectionOption="true" itemLabel="Selecione"/>
+                            <f:selectItems value="#{contactBacking.loadCustomers()}" var="user" itemValue="#{user.id}"
+                                           itemLabel="#{user.name}"/>
+                        </h:selectOneMenu>
+                    </h:panelGroup>
+
+                    <!-- Tag -->
+                    <div>
+                        <h:outputLabel class="block text-sm font-medium text-gray-600" value="Tag" />
+                        <h:selectOneMenu id="tag" value="#{contactBacking.search.tag}"
+                                         styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none">
+                            <f:selectItem noSelectionOption="true" itemLabel="Selecione"/>
+                            <f:selectItem itemValue="Outros"/>
+                            <f:selectItem itemValue="Emergência"/>
+                            <f:selectItem itemValue="Pagamento"/>
+                            <f:selectItem itemValue="Aviso"/>
+                        </h:selectOneMenu>
+                    </div>
+
+                    <!-- Tipo -->
+                    <div>
+                        <h:outputLabel class="block text-sm font-medium text-gray-600" value="Tipo de Contato" />
+                        <h:selectOneMenu id="type" value="#{contactBacking.search.type}"
+                                         styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none">
+                            <f:selectItem noSelectionOption="true" itemLabel="Selecione"/>
+                            <f:selectItem itemLabel="E-mail" itemValue="EMAIL"/>
+                            <f:selectItem itemLabel="Telefone" itemValue="PHONE"/>
+                        </h:selectOneMenu>
+                    </div>
+
+                    <!-- Data de Criação -->
+                    <div>
+                        <h:outputLabel class="block text-sm font-medium text-gray-600" value="Data de Criação Inicial" />
+                        <h:inputText id="datepick" value="#{contactBacking.search.createdAtStart}" pt:onfocus="$(this).inputmask({alias: 'datetime',inputFormat: 'dd/MM/yyyy HH:MM',inputmode: 'numeric'})"
+                                     styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none"
+                                     pt:placeholder="dd/MM/yyyy HH:MM"/>
+                    </div>
+
+                    <!-- Data de Criação final -->
+                    <div>
+                        <h:outputLabel class="block text-sm font-medium text-gray-600" value="Data de Criação Final" />
+                        <h:inputText id="datepick2" value="#{contactBacking.search.createdAtEnd}" pt:onfocus="$(this).inputmask({alias: 'datetime',inputFormat: 'dd/MM/yyyy HH:MM',inputmode: 'numeric'})"
+                                     styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none"
+                                     pt:placeholder="dd/MM/yyyy HH:MM"/>
+                    </div>
+                </div>
+
+                <!-- Botão de busca -->
+                <div class="mt-4 text-right">
+                    <h:commandButton value="Buscar" action="#{contactBacking.searchContact()}"
+                                     styleClass="bg-green-800 text-white px-4 py-2 rounded-lg hover:bg-green-600">
+                    </h:commandButton>
+                </div>
+            </div>
+
+            <h:commandButton rendered="#{sessionBacking.customer}" type="button" value="Cadastrar Contato"
+                             action="#{contactBacking.resetContact()}"
+                             styleClass="mt-6 text-sm h-9 bg-green-800 text-white p-2 rounded-md hover:bg-green-700 transition">
+                <f:ajax execute="@this" resetValues="frm:createContacts"/>
+            </h:commandButton>
+
+            <h:dataTable id="listContacts" value="#{contactBacking.listContacts}" var="contact"
+                         styleClass="w-full border border-gray-300 rounded-300 mt-2">
+
+                <f:facet name="header">
+                    <h3 class="py-2 border-b border-gray-300">Listagem de Contatos</h3>
+                </f:facet>
+
+                <h:column rendered="#{sessionBacking.admin}">
+                    <f:facet name="header">
+                        <div class="px-4 py-2 border-b border-gray-300">
+                            <h:outputText styleClass="text-gray-700 text-[14px] whitespace-nowrap" value="Foto"/>
+                        </div>
+                    </f:facet>
+                    <div class="px-4 py-2 text-gray-600">
+                        <h:graphicImage width="30" styleClass="rounded-full"
+                                        rendered="#{contact.customer.archive.id != null}"
+                                        url="#{contact.customer.archive.base64Mini}"/>
+
+                        <h:graphicImage width="30" styleClass="rounded-full"
+                                        rendered="#{contact.customer.archive.id == null}"
+                                        name="img/no-profile.jpg"/>
+                    </div>
+                </h:column>
+
+                <h:column rendered="#{sessionBacking.admin}">
+                    <f:facet name="header">
+                        <div class="px-4 py-2 border-b border-gray-300">
+                            <h:outputText styleClass="text-gray-700 text-[14px] whitespace-nowrap" value="CPF"/>
+                        </div>
+                    </f:facet>
+
+                    <h:outputText styleClass="px-4 py-2 text-gray-600 text-[12px] whitespace-nowrap" value="#{contact.customer.cpf}"/>
+                </h:column>
+
+                <h:column rendered="#{sessionBacking.admin}">
+                    <f:facet name="header">
+                        <div class="px-4 py-2 border-b border-gray-300">
+                            <h:outputText styleClass="text-gray-700 text-[14px] whitespace-nowrap" value="Nome"/>
+                        </div>
+                    </f:facet>
+
+                    <h:outputText styleClass="px-4 py-2 text-gray-600 text-[12px]" value="#{contactBacking.firstName(contact.customer.name)}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        <div class="px-4 py-2 border-b border-gray-300">
+                            <h:outputText styleClass="text-gray-700 text-[14px] whitespace-nowrap" value="Tag"/>
+                        </div>
+                    </f:facet>
+
+                    <h:outputText
+                            styleClass="m-6 p-4 text-gray-600 inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-green-600/20 ring-inset"
+                            value="#{contact.tag}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        <div class="px-4 py-2 border-b border-gray-300">
+                            <h:outputText styleClass="text-gray-700 text-[14px] whitespace-nowrap"
+                                          value="Tipo de Contato"/>
+                        </div>
+                    </f:facet>
+
+                    <h:outputText styleClass="px-4 py-2 text-gray-600 text-[12px]"
+                                  value="#{contactBacking.getTypeContact(contact.type)}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        <div class="px-4 py-2 border-b border-gray-300">
+                            <h:outputText styleClass="text-gray-700 text-[14px] whitespace-nowrap" value="Valor"/>
+                        </div>
+                    </f:facet>
+
+                    <h:outputText styleClass="px-4 py-2 text-gray-600 text-[12px]" value="#{contact.value}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        <div class="px-4 py-2 border-b border-gray-300">
+                            <h:outputText styleClass="text-gray-700 text-[14px] whitespace-nowrap" value="Mensagem"/>
+                        </div>
+                    </f:facet>
+
+                    <h:outputText styleClass="px-4 py-2 text-gray-600 text-[12px] max-w-[300px] line-clamp-2"
+                                  value="#{contact.message}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        <div class="px-4 py-2 border-b border-gray-300">
+                            <h:outputText styleClass="text-gray-700 text-[14px] whitespace-nowrap" value="Data de Criação"/>
+                        </div>
+                    </f:facet>
+
+                    <h:outputText styleClass="px-4 py-2 text-gray-600 text-[12px]" value="#{contact.createdAt}"
+                                  converter="localDateTimeConverter"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        <div class="px-4 py-2 border-b border-gray-300">
+                            <h:outputText styleClass="text-gray-700 text-[14px] whitespace-nowrap" value="Ações"/>
+                        </div>
+                    </f:facet>
+                    <div class="px-4 py-2 text-center">
+                        <h:commandButton value="#{sessionBacking.admin ? 'Ver' : 'Editar'}"
+                                         action="#{contactBacking.setContactEdit(contact)}"
+                                         styleClass="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-2">
+                            <f:ajax event="click" execute="@this" render="@this"/>
+                        </h:commandButton>
+
+                        <h:commandButton rendered="#{sessionBacking.customer}" value="Excluir"
+                                         action="#{contactBacking.setContactDelete(contact)}"
+                                         styleClass="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+                            <f:ajax event="click" execute="@this" render="@form"/>
+                        </h:commandButton>
+                    </div>
+                </h:column>
+
+            </h:dataTable>
+
+            <p:dialog
+                    header="#{sessionBacking.customer ? (contactBacking.contact.uuid != null ? 'Editar Contato' : 'Cadastrar Contato') : 'Visualizar'}"
+                    id="createContacts" widgetVar="createContacts" minHeight="60" width="650" showEffect="fade"
+                    modal="true" closeOnEscape="true" resizable="false">
+
+                <h:panelGroup id="info-address" layout="block" class="h-[500px] py-4">
+
+                    <!-- Tag -->
+                    <div class="mt-4">
+                        <h:outputLabel class="block text-sm font-medium text-gray-600 mb-1 mt-4" value="Tag"/>
+                        <h:selectOneMenu disabled="#{sessionBacking.admin}" id="tag-jsf"
+                                         value="#{contactBacking.contact.tag}"
+                                         styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none">
+                            <f:selectItem noSelectionOption="true" itemLabel="Selecione"/>
+                            <f:selectItem itemValue="Outros"/>
+                            <f:selectItem itemValue="Emergência"/>
+                            <f:selectItem itemValue="Pagamento"/>
+                            <f:selectItem itemValue="Aviso"/>
+                        </h:selectOneMenu>
+                    </div>
+
+                    <!-- Tipo de contato -->
+                    <div class="mt-4">
+                        <h:outputLabel class="block text-sm font-medium text-gray-600 mb-1 mt-4"
+                                       value="Tipo de Contato"/>
+                        <h:selectOneMenu disabled="#{sessionBacking.admin}" id="type-create-jsf"
+                                         value="#{contactBacking.contact.type}"
+                                         styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none">
+                            <f:selectItem noSelectionOption="true" itemLabel="Selecione"/>
+                            <f:selectItem itemLabel="E-mail" itemValue="EMAIL"/>
+                            <f:selectItem itemLabel="Telefone" itemValue="PHONE"/>
+                            <f:ajax execute="@this" render="frm:value" />
+                        </h:selectOneMenu>
+                    </div>
+
+                    <h:panelGroup layout="block" id="value" class="mt-4">
+
+                        <!-- Valor -->
+                        <h:outputLabel class="block text-sm font-medium text-gray-600 mb-1 mt-4" value="Valor"/>
+                        <h:inputText maxlength="200" disabled="#{sessionBacking.admin}"
+                                     value="#{contactBacking.contact.value}"
+                                     styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none"
+                                     pt:placeholder="#{contactBacking.contact.type.equals('PHONE') ? 'Digite o telefone' : 'Digite seu e-mail'}"/>
+
+                        <h:outputText styleClass="text-gray-700 text-[12px]"
+                                    value="#{contactBacking.contact.type.equals('PHONE') ? 'Ex.: 54900112233' : 'Ex.: vitucelio@gmail.com'}"/>
+                    </h:panelGroup>
+
+                    <!-- Mensagem -->
+                    <div>
+                        <h:outputLabel class="block text-sm font-medium text-gray-600 mb-1 mt-4" value="Mensagem"/>
+                        <h:inputTextarea disabled="#{sessionBacking.admin}" rows="10" id="desc"
+                                         value="#{contactBacking.contact.message}"
+                                         styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none"
+                                         pt:placeholder="Digite uma mensagem"/>
+                    </div>
+
+                    <!-- Botão Salvar -->
+                    <div class="mt-6 pb-4">
+                        <h:commandButton rendered="#{sessionBacking.customer}" value="Salvar"
+                                         action="#{contactBacking.actionSaveContact()}"
+                                         styleClass="text-sm w-full h-9 bg-green-800 text-white py-2 rounded-md hover:bg-green-700 transition"/>
+                    </div>
+                </h:panelGroup>
+            </p:dialog>
+
+            <p:dialog header="Atenção" id="deleteContacts" widgetVar="deleteContacts" minHeight="40" width="350"
+                      showEffect="fade" modal="true" closeOnEscape="true">
+
+                <h:outputText value="Deseja deletar o contato do sistema?"/>
+
+                <h:commandButton value="Sim, deletar" action="#{contactBacking.actionDeleteContact()}"
+                                 styleClass="text-sm h-9 bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition mt-4">
+                    <f:ajax event="click" execute="@this" render="@form"/>
+                </h:commandButton>
+
+            </p:dialog>
+
+        </h:form>
+
+    </ui:define>
+</ui:composition>

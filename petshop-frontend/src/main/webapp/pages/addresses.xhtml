@@ -1,0 +1,226 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                template="../templates/template.xhtml">
+    <ui:define name="head">
+        <title>Endereços</title>
+    </ui:define>
+    <ui:define name="content">
+        <h1 class="text-2xl font-bold">Endereços</h1>
+
+        <h:form id="frm">
+            <h:commandButton type="button" value="Cadastrar Endereço"
+                             action="#{addressBacking.resetAddresses()}"
+                             styleClass="mt-6 text-sm h-9 bg-green-800 text-white p-2 rounded-md hover:bg-green-700 transition">
+                <f:ajax execute="@this" resetValues="frm:addressesCreate"/>
+            </h:commandButton>
+
+            <h:dataTable id="listAddresses" value="#{addressBacking.addresses}" var="address"
+                         styleClass="w-full border border-gray-300 rounded-300 mt-2">
+
+                <f:facet name="header">
+                    <h3 class="py-2 border-b border-gray-300">Listagem de Endereços</h3>
+                </f:facet>
+
+                <h:column>
+                    <f:facet name="header">
+                        <div class="px-4 py-2 border-b border-gray-300">
+                            <h:outputText styleClass="text-gray-700 text-[14px]" value="Tag"/>
+                        </div>
+                    </f:facet>
+
+                    <h:outputText styleClass="px-4 py-2 text-gray-600 text-[12px] max-w-[250px] line-clamp-1"
+                                  value="#{address.tag}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        <div class="px-4 py-2 border-b border-gray-300">
+                            <h:outputText styleClass="text-gray-700 text-[14px]" value="Rua"/>
+                        </div>
+                    </f:facet>
+
+                    <h:outputText styleClass="px-4 py-2 text-gray-600 text-[12px] line-clamp-1"
+                                  value="#{address.street}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        <div class="px-4 py-2 border-b border-gray-300">
+                            <h:outputText styleClass="text-gray-700 text-[14px]" value="Bairro"/>
+                        </div>
+                    </f:facet>
+
+                    <h:outputText styleClass="px-4 py-2 text-gray-600 text-[12px]" value="#{address.district}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        <div class="px-4 py-2 border-b border-gray-300">
+                            <h:outputText styleClass="text-gray-700 text-[14px]" value="Complemento"/>
+                        </div>
+                    </f:facet>
+
+                    <h:outputText styleClass="px-4 py-2 text-gray-600 text-[12px] max-w-[350px] line-clamp-2"
+                                  value="#{address.complement}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        <div class="px-4 py-2 border-b border-gray-300">
+                            <h:outputText styleClass="text-gray-700 text-[14px]" value="Cidade"/>
+                        </div>
+                    </f:facet>
+
+                    <h:outputText styleClass="px-4 py-2 text-gray-600 text-[12px] line-clamp-1"
+                                  value="#{address.city}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        <div class="px-4 py-2 border-b border-gray-300">
+                            <h:outputText styleClass="text-gray-700 text-[14px]" value="Estado"/>
+                        </div>
+                    </f:facet>
+
+                    <h:outputText styleClass="px-4 py-2 text-gray-600 text-[12px] line-clamp-1"
+                                  value="#{address.state}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        <div class="px-4 py-2 border-b border-gray-300">
+                            <h:outputText styleClass="text-gray-700 text-[14px]"
+                                          value="Código Postal"/>
+                        </div>
+                    </f:facet>
+
+                    <h:outputText styleClass="px-4 py-2 text-gray-600 text-[12px]" value="#{address.postalCode}"/>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        <div class="px-4 py-2 border-b border-gray-300">
+                            <h:outputText styleClass="text-gray-700 text-center text-[14px]" value="Ações"/>
+                        </div>
+                    </f:facet>
+
+                    <h:panelGroup layout="block" styleClass="px-4 py-2 text-center">
+                        <h:commandButton value="Editar"
+                                         action="#{addressBacking.setAddressEdit(address)}"
+                                         styleClass="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-2">
+                            <f:ajax event="click" execute="@this" render="@this"/>
+                        </h:commandButton>
+
+                        <h:commandButton value="Excluir"
+                                         action="#{addressBacking.setAddressDelete(address)}"
+                                         styleClass="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+                            <f:ajax event="click" execute="@this" render="@form"/>
+                        </h:commandButton>
+                    </h:panelGroup>
+                </h:column>
+
+            </h:dataTable>
+
+            <p:dialog
+                    header="#{addressBacking.address.id != null ? 'Editar Endereço' : 'Cadastrar Endereço'}"
+                    id="addressesCreate" widgetVar="addressesCreate" minHeight="60" width="650" showEffect="fade"
+                    modal="true" closeOnEscape="true" resizable="false">
+
+                <h:panelGroup id="info-address" layout="block" class="h-[500px] py-4">
+
+                    <!-- Tag -->
+                    <div class="mt-4">
+                        <h:outputLabel styleClass="block text-sm font-medium text-gray-600 mb-1 mt-4" value="Tag" />
+                        <h:inputText maxlength="200" id="tag"
+                                     value="#{addressBacking.address.tag}"
+                                     styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none"
+                                     pt:placeholder="Digite a tag"/>
+                    </div>
+
+                    <!-- CEP -->
+                    <div class="mt-4">
+                        <h:outputLabel styleClass="block text-sm font-medium text-gray-600 mb-1 mt-4" value="CEP" />
+                        <h:inputText maxlength="200" id="cep" pt:onfocus="$('#frm\\:cep').mask('00000-000', {reverse: true});"
+                                     value="#{addressBacking.address.postalCode}"
+                                     styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none"
+                                     pt:placeholder="Digite o CEP">
+                            <f:ajax event="blur" execute="info-address" render="@this"
+                                    listener="#{addressBacking.searchCEP()}"/>
+                        </h:inputText>
+                    </div>
+
+                    <!-- Cidade -->
+                    <div class="mt-4">
+                        <h:outputLabel styleClass="block text-sm font-medium text-gray-600 mb-1 mt-4" value="Cidade" />
+                        <h:inputText maxlength="200" id="city"
+                                     value="#{addressBacking.address.city}"
+                                     styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none"
+                                     pt:placeholder="Digite a cidade"/>
+                    </div>
+
+                    <!-- Estado -->
+                    <div class="mt-4">
+                        <h:outputLabel styleClass="block text-sm font-medium text-gray-600 mb-1 mt-4" value="Estado" />
+                        <h:inputText maxlength="200" id="state"
+                                     value="#{addressBacking.address.state}"
+                                     styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none"
+                                     pt:placeholder="Digite o estado"/>
+                    </div>
+
+                    <!-- Complemento -->
+                    <div>
+                        <h:outputLabel styleClass="block text-sm font-medium text-gray-600 mb-1 mt-4" value="Complemento" />
+                        <h:inputTextarea rows="10" id="complement"
+                                         value="#{addressBacking.address.complement}"
+                                         styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none"
+                                         pt:placeholder="Digite um complemento"/>
+                    </div>
+
+                    <!-- Rua -->
+                    <div class="mt-4">
+                        <h:outputLabel styleClass="block text-sm font-medium text-gray-600 mb-1 mt-4" value="Rua" />
+                        <h:inputText maxlength="200" id="street"
+                                     value="#{addressBacking.address.street}"
+                                     styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none"
+                                     pt:placeholder="Digite a rua"/>
+                    </div>
+
+                    <!-- Bairro -->
+                    <div class="mt-4">
+                        <h:outputLabel styleClass="block text-sm font-medium text-gray-600 mb-1 mt-4" value="Bairro" />
+                        <h:inputText maxlength="200" id="district"
+                                     value="#{addressBacking.address.district}"
+                                     styleClass="text-sm w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:outline-none"
+                                     pt:placeholder="Digite o bairro"/>
+                    </div>
+
+                    <!-- Botão Salvar -->
+                    <div class="mt-6 pb-4">
+                        <h:commandButton value="Salvar"
+                                         action="#{addressBacking.actionSaveAddress()}"
+                                         styleClass="text-sm w-full h-9 bg-green-800 text-white py-2 rounded-md hover:bg-green-700 transition"/>
+                    </div>
+                </h:panelGroup>
+
+            </p:dialog>
+
+            <p:dialog header="Atenção" id="addressesDelete" widgetVar="addressesDelete" minHeight="40" width="350"
+                      showEffect="fade" modal="true" closeOnEscape="true">
+
+                <h:outputText value="Deseja deletar o endereço do sistema?"/>
+
+                <h:commandButton value="Sim, deletar" action="#{addressBacking.actionDeleteAddress()}"
+                                 styleClass="text-sm h-9 bg-red-600 text-white p-2 rounded-md hover:bg-red-700 transition mt-4">
+                    <f:ajax event="click" execute="@this" render="@form"/>
+                </h:commandButton>
+
+            </p:dialog>
+
+        </h:form>
+
+    </ui:define>
+</ui:composition>
