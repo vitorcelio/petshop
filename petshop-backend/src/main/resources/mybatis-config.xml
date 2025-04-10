@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!-- Configuração para mapear colunas com underline para camelCase -->
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+
+    <typeAliases>
+        <package name="com.metaway.petshop.models.myBatis"/>
+    </typeAliases>
+
+    <typeHandlers>
+        <typeHandler handler="com.metaway.petshop.configurations.myBatis.typeHandler.GenderTypeHandler"/>
+    </typeHandlers>
+
+    <!-- Especifica onde estão os mapeamentos XML -->
+    <mappers>
+        <mapper resource="mappers/BreedDao.xml"/>
+        <mapper resource="mappers/AddressDao.xml"/>
+        <mapper resource="mappers/PetDao.xml"/>
+        <mapper resource="mappers/UserDao.xml"/>
+        <mapper resource="mappers/RoleDao.xml"/>
+        <mapper resource="mappers/ArchiveDao.xml"/>
+    </mappers>
+
+</configuration>

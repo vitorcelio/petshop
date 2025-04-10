@@ -1,6 +1,7 @@
 package com.metaway.petshop.dto.request;
 
 import com.metaway.petshop.models.Address;
+import com.metaway.petshop.models.myBatis.AddressV2;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -38,6 +39,20 @@ public class AddressRequestDTO {
 
     public Address toAddress() {
         return Address.builder()
+                .customerId(customerId)
+                .street(street)
+                .district(district)
+                .complement(complement)
+                .city(city)
+                .state(state)
+                .postalCode(postalCode)
+                .tag(tag)
+                .build();
+    }
+
+    public AddressV2 toAddressV2(Integer id) {
+        return AddressV2.builder()
+                .id(id)
                 .customerId(customerId)
                 .street(street)
                 .district(district)

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metaway.petshop.mappers.UserDao">
+
+    <cache type="org.mybatis.caches.ehcache.EhcacheCache" eviction="LRU" flushInterval="60000" size="250" readOnly="false" />
+    <!--eviction: LRU(Menos recente utilizado), FIFO(Remove os primeiros add), SOFT(Remove confirme JVM precisa de memória), WEAK(Remove sem referencias)-->
+    <!--size: Número máximo de objetos armazenados em cache-->
+    <!--flushInterval: Define o tempo para limpar o cache (em milissegundos)-->
+    <!--readOnly: Define que objetos em cache não podem ser modificados-->
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id" parameterType="UserV2">
+        INSERT INTO users(cpf, password, name, enabled, role_id, archive_id, created_at, updated_at, account_deleted)
+        VALUES (#{cpf}, #{password}, #{name}, #{enabled}, #{roleId}, #{archiveId}, #{createdAt}, #{updatedAt}, #{accountDeleted})
+    </insert>
+
+    <update id="update" parameterType="UserV2">
+        UPDATE users
+        SET cpf = #{cpf},
+            password = #{password},
+            name = #{name},
+            enabled = #{enabled},
+            role_id = #{roleId},
+            archive_id = #{archiveId},
+            created_at = #{createdAt},
+            updated_at = #{updatedAt},
+            account_deleted = #{accountDeleted}
+        WHERE id = #{id}
+    </update>
+
+    <resultMap id="userResultMap" type="UserV2">
+        <id property="id" column="id"/>
+        <result property="cpf" column="cpf"/>
+        <result property="name" column="name"/>
+        <result property="password" column="password"/>
+        <result property="enabled" column="enabled"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="accountDeleted" column="account_deleted"/>
+        <result property="roleId" column="role_id"/>
+        <result property="archiveId" column="archive_id"/>
+
+        <association property="archive" javaType="ArchiveV2">
+            <id property="id" column="id_archive"/>
+            <result property="base64" column="base_64"/>
+            <result property="base64Mini" column="base_64_mini"/>
+        </association>
+
+        <association property="role" javaType="RoleV2">
+            <id property="id" column="role_user_id"/>
+            <result property="name" column="role_user_name"/>
+        </association>
+    </resultMap>
+
+    <select id="findById" parameterType="java.lang.Integer" resultMap="userResultMap">
+        SELECT u.id,
+               u.cpf,
+               u.name,
+               u.password,
+               u.enabled,
+               u.role_id,
+               u.created_at,
+               u.updated_at,
+               u.account_deleted,
+               a.id as id_archive,
+               a.base_64,
+               a.base_64_mini,
+               r.id as role_user_id,
+               r.name as role_user_name
+        FROM users u
+             LEFT JOIN archives a ON a.id = u.archive_id
+             LEFT JOIN roles r ON r.id = u.role_id
+        WHERE u.id = #{id}
+    </select>
+
+    <select id="findByCpf" parameterType="java.lang.String" resultMap="userResultMap" useCache="true">
+        SELECT u.id,
+               u.cpf,
+               u.name,
+               u.password,
+               u.enabled,
+               u.role_id,
+               u.created_at,
+               u.updated_at,
+               u.account_deleted,
+               a.id as id_archive,
+               a.base_64,
+               a.base_64_mini,
+               r.id as role_user_id,
+               r.name as role_user_name
+        FROM users u
+                 LEFT JOIN archives a ON a.id = u.archive_id
+                 LEFT JOIN roles r ON r.id = u.role_id
+        WHERE u.cpf = #{cpf}
+    </select>
+
+    <update id="updatePassword">
+        UPDATE users set password = #{password} where id = #{id}
+    </update>
+
+    <select id="findAll" parameterType="map" resultMap="userResultMap" useCache="true" flushCache="false">
+        SELECT u.id,
+        u.cpf,
+        u.name,
+        u.password,
+        u.enabled,
+        u.role_id,
+        u.created_at,
+        u.updated_at,
+        u.account_deleted,
+        a.id as id_archive,
+        a.base_64,
+        a.base_64_mini,
+        r.id as role_user_id,
+        r.name as role_user_name
+        FROM users u
+        LEFT JOIN archives a ON a.id = u.archive_id
+        LEFT JOIN roles r ON r.id = u.role_id
+        <where>
+            1=1
+
+            <if test="roleId != null">
+                AND u.role_id = #{roleId}
+            </if>
+
+            <if test="name != null">
+                AND UPPER(unaccent(u.name)) LIKE UPPER(CONCAT('%', unaccent(#{name}), '%'))
+            </if>
+
+            <if test="cpf != null">
+                AND UPPER(unaccent(u.cpf)) LIKE UPPER(CONCAT('%', unaccent(#{cpf}), '%'))
+            </if>
+
+            <if test="createdAtStart != null">
+                AND u.created_at &gt;= #{createdAtStart}
+            </if>
+
+            <if test="createdAtEnd != null">
+                AND u.created_at &lt;= #{createdAtEnd}
+            </if>
+        </where>
+
+        ORDER BY id DESC
+        LIMIT #{quantity}
+        OFFSET #{offset}
+
+    </select>
+
+    <select id="findByIds" parameterType="list" resultMap="userResultMap">
+        SELECT u.id,
+               u.cpf,
+               u.name,
+               u.password,
+               u.enabled,
+               u.role_id,
+               u.created_at,
+               u.updated_at,
+               u.account_deleted,
+               a.id as id_archive,
+               a.base_64,
+               a.base_64_mini,
+               r.id as role_user_id,
+               r.name as role_user_name
+        FROM users u
+                 LEFT JOIN archives a ON a.id = u.archive_id
+                 LEFT JOIN roles r ON r.id = u.role_id
+        WHERE
+            u.id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <update id="delete" parameterType="java.lang.Integer">
+        UPDATE users
+        SET enabled = false,
+            account_deleted = true
+        WHERE id = #{id}
+    </update>
+
+    <select id="existCPF" parameterType="string" resultType="boolean">
+        SELECT count(*) > 0 FROM users WHERE cpf = #{cpf}
+    </select>
+
+</mapper>

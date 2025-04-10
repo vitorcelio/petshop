@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metaway.petshop.mappers.BreedDao">
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id" parameterType="BreedV2">
+        INSERT INTO breeds(name, description)
+        values (#{name}, #{description})
+    </insert>
+
+    <select id="findById" parameterType="java.lang.Integer" resultType="BreedV2">
+        SELECT id, name, description
+        FROM breeds
+        WHERE id = #{id}
+    </select>
+
+    <update id="update" parameterType="BreedV2">
+        UPDATE breeds
+        SET name = #{name},
+            description = #{description}
+        WHERE id = #{id}
+    </update>
+
+    <select id="findAll" resultType="BreedV2">
+        SELECT * FROM breeds
+    </select>
+
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM breeds WHERE id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metaway.petshop.mappers.PetDao">
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id" parameterType="PetV2">
+        INSERT INTO pets(name, customer_id, breed_id, archive_id, birth_date, gender)
+        VALUES (#{name}, #{customerId}, #{breedId}, #{archiveId}, #{birthDate},
+                #{gender, typeHandler=com.metaway.petshop.configurations.myBatis.typeHandler.GenderTypeHandler})
+    </insert>
+
+    <update id="update" parameterType="PetV2">
+        UPDATE pets
+        SET name = #{name},
+            customer_id = #{customerId},
+            breed_id = #{breedId},
+            archive_id = #{archiveId},
+            birth_date = #{birthDate},
+            gender = #{gender,typeHandler=com.metaway.petshop.configurations.myBatis.typeHandler.GenderTypeHandler}
+        WHERE id = #{id}
+    </update>
+
+    <resultMap id="petResultMap" type="PetV2">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="gender" column="gender" typeHandler="com.metaway.petshop.configurations.myBatis.typeHandler.GenderTypeHandler"/>
+        <result property="birthDate" column="birth_date"/>
+
+        <association property="customer" javaType="UserV2">
+            <id property="id" column="id_customer"/>
+            <result property="name" column="name_customer"/>
+            <result property="cpf" column="cpf_customer"/>
+
+            <association property="archive" javaType="ArchiveV2">
+                <id property="id" column="id_archive_customer"/>
+                <result property="base64" column="base_64_archive_customer"/>
+                <result property="base64Mini" column="base_64_mini_archive_customer"/>
+            </association>
+        </association>
+
+        <association property="breed" javaType="BreedV2">
+            <id property="id" column="id_breed"/>
+            <result property="name" column="name_breed"/>
+            <result property="description" column="description_breed"/>
+        </association>
+
+        <association property="archive" javaType="ArchiveV2">
+            <id property="id" column="id_archive"/>
+            <result property="base64" column="base_64_archive"/>
+            <result property="base64Mini" column="base_64_mini_archive"/>
+        </association>
+
+    </resultMap>
+
+    <select id="findById" parameterType="java.lang.Integer" resultMap="petResultMap">
+        SELECT p.id,
+               p.name,
+               p.birth_date,
+               p.gender,
+
+               -- Dados do Dono do pet
+               c.id as id_customer,
+               c.name as name_customer,
+               c.cpf as cpf_customer,
+
+               -- Dados da Foto do Dono do Pet
+               ac.id as id_archive_customer,
+               ac.base_64 as base_64_archive_customer,
+               ac.base_64_mini as base_64_mini_archive_customer,
+
+               -- Dados da Raça do pet
+               b.id as id_breed,
+               b.name as name_breed,
+               b.description as description_breed,
+
+               -- Dados da Foto do Pet
+               a.id as id_archive,
+               a.base_64 as base_64_archive,
+               a.base_64_mini as base_64_mini_archive
+
+        FROM pets p
+                 JOIN breeds b ON b.id = p.breed_id
+                 LEFT JOIN users c ON c.id = p.customer_id
+                 LEFT JOIN archives ac ON ac.id = c.archive_id
+                 LEFT JOIN archives a ON a.id = p.archive_id
+        WHERE p.id = #{id}
+
+    </select>
+
+    <select id="findAll" parameterType="map" resultMap="petResultMap">
+        SELECT p.id,
+        p.name,
+        p.birth_date,
+        p.gender,
+
+        -- Dados do Dono do pet
+        c.id as id_customer,
+        c.name as name_customer,
+        c.cpf as cpf_customer,
+
+        -- Dados da Foto do Dono do Pet
+        ac.id as id_archive_customer,
+        ac.base_64 as base_64_archive_customer,
+        ac.base_64_mini as base_64_mini_archive_customer,
+
+        -- Dados da Raça do pet
+        b.id as id_breed,
+        b.name as name_breed,
+        b.description as description_breed,
+
+        -- Dados da Foto do Pet
+        a.id as id_archive,
+        a.base_64 as base_64_archive,
+        a.base_64_mini as base_64_mini_archive
+
+        FROM pets p
+            JOIN breeds b ON b.id = p.breed_id
+            LEFT JOIN users c ON c.id = p.customer_id
+            LEFT JOIN archives ac ON ac.id = c.archive_id
+            LEFT JOIN archives a ON a.id = p.archive_id
+        <where>
+            1=1
+
+            <if test="customerId != null">
+                AND p.customer_id = #{customerId}
+            </if>
+
+            <if test="name != null">
+                AND UPPER(unaccent(p.name)) LIKE UPPER(CONCAT('%', unaccent(#{name}), '%'))
+            </if>
+
+            <if test="breedId != null">
+                AND p.breed_id = #{breedId}
+            </if>
+
+            <if test="gender != null">
+                AND p.gender = #{gender,typeHandler=com.metaway.petshop.configurations.myBatis.typeHandler.GenderTypeHandler}
+            </if>
+
+        </where>
+    </select>
+
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM pets WHERE id = #{id}
+    </delete>
+
+</mapper>

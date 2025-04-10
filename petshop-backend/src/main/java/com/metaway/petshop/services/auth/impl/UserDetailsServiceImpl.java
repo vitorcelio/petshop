@@ -16,6 +16,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String cpf) throws UsernameNotFoundException {
-        return repository.findByCpf(cpf).orElseThrow(() -> new ValidationException("Cpf ou Senha incorreto!"));
+        return repository.findByCpf(cpf).orElseThrow(() -> new ValidationException("Cpf ou Senha incorreta!"));
     }
 }

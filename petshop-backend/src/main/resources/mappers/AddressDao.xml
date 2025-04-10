@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metaway.petshop.mappers.AddressDao">
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id" parameterType="AddressV2">
+        INSERT INTO address(customer_id, street, district, complement, city, state, postal_code, tag)
+        values (#{customerId}, #{street}, #{district}, #{complement}, #{city}, #{state}, #{postalCode}, #{tag})
+    </insert>
+
+    <update id="update" parameterType="AddressV2">
+        UPDATE address
+        SET customer_id = #{customerId},
+            street = #{street},
+            district = #{district},
+            complement = #{complement},
+            city = #{city},
+            state = #{state},
+            postal_code = #{postalCode},
+            tag = #{tag}
+        WHERE id = #{id}
+    </update>
+
+    <select id="findAll" parameterType="java.lang.Integer" resultType="AddressV2">
+        SELECT * FROM address WHERE customer_id = #{customerId}
+    </select>
+
+    <select id="findById" parameterType="java.lang.Integer" resultType="AddressV2">
+        SELECT id,
+               customer_id,
+               street,
+               district,
+               complement,
+               city,
+               state,
+               postal_code,
+               tag
+        FROM address
+        WHERE id = #{id}
+    </select>
+
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM address WHERE id = #{id}
+    </delete>
+
+</mapper>

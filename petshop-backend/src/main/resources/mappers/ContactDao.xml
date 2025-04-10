@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.metaway.petshop.mappers.ContactDao">
+
+    <insert id="save" useGeneratedKeys="false"  parameterType="ContactV2">
+        INSERT INTO contacts(uuid, customer_id, tag, type, value, message, created_at, updated_at)
+        VALUES (uuid_generate_v4(), #{customerId}, #{tag}, #{type,typeHandler=com.metaway.petshop.configurations.myBatis.typeHandler.ContactTypeHandler},
+                #{message}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <update id="update" parameterType="ContactV2">
+        UPDATE contacts
+        SET customer_id = #{customerId},
+            tag = #{tag},
+            type = #{type,typeHandler=com.metaway.petshop.configurations.myBatis.typeHandler.ContactTypeHandler},
+            value = #{value},
+            message = #{message},
+            created_at = #{createdAt},
+            updated_at = #{updatedAt}
+        WHERE uuid = #{uuid}
+    </update>
+
+    <resultMap id="contactResultMap" type="ContactV2">
+        <id property="uuid" column="uuid"/>
+        <result property="customerId" column="customer_id"/>
+        <result property="tag" column="tag"/>
+        <result property="type" column="type" typeHandler="com.metaway.petshop.configurations.myBatis.typeHandler.ContactTypeHandler"/>
+        <result property="value" column="column"/>
+        <result property="message" column="message"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+
+        <association property="customer" javaType="UserV2">
+            <id property="id" column="user_id"/>
+            <result property="cpf" column="cpf"/>
+            <result property="name" column="user_name"/>
+        </association>
+    </resultMap>
+
+    <select id="findByUuid" parameterType="java.lang.String" resultMap="contactResultMap">
+        SELECT c.uuid,
+               c.customer_id,
+               c.tag,
+               c.type,
+               c.value,
+               c.message,
+               c.created_at,
+               c.updated_at,
+               u.id as user_id,
+               u.cpf,
+               u.name as user_name
+        FROM contacts c,
+             users u
+        WHERE c.customer_id = u.id
+          AND uuid = #{uuid}
+    </select>
+
+    <select id="findAll" parameterType="map" resultMap="contactResultMap">
+        SELECT c.uuid,
+               c.customer_id,
+               c.tag,
+               c.type,
+               c.value,
+               c.message,
+               c.created_at,
+               c.updated_at,
+               u.id as user_id,
+               u.cpf,
+               u.name as user_name
+        FROM contacts c
+        LEFT JOIN users u ON c.customer_id = u.id
+        <where>
+            1=1
+
+            <if test="customerId != null">
+                AND c.customer_id = #{customerId}
+            </if>
+
+            <if test="tag != null">
+                AND c.tag = #{tag}
+            </if>
+
+            <if test="type != null">
+                AND c.type = #{type,typeHandler=com.metaway.petshop.configurations.myBatis.typeHandler.ContactTypeHandler}
+            </if>
+
+            <if test="createdAtStart != null">
+                AND c.created_at &gt;= #{createdAtStart}
+            </if>
+
+            <if test="createdAtEnd != null">
+                AND c.created_at &lt;= #{createdAtEnd}
+            </if>
+
+        </where>
+
+        ORDER BY c.created_at DESC
+        LIMIT #{quantity}
+        OFFSET #{offset}
+
+    </select>
+
+    <delete id="delete" parameterType="java.lang.String">
+        DELETE FROM contacts WHERE uuid = #{uuid}
+    </delete>
+
+</mapper>

@@ -1,9 +1,11 @@
 package com.metaway.petshop;
 
 import lombok.RequiredArgsConstructor;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+@MapperScan("com.metaway.petshop.mappers")
 @RequiredArgsConstructor
 @SpringBootApplication
 public class PetshopBackendApplication /*implements ApplicationRunner*/ {
