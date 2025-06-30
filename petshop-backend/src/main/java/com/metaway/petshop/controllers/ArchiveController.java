@@ -5,6 +5,7 @@ import com.metaway.petshop.configurations.swagger.AuthorizationSwagger;
 import com.metaway.petshop.dto.request.ArchiveRequestDTO;
 import com.metaway.petshop.models.User;
 import com.metaway.petshop.services.archive.ArchiveService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -13,14 +14,13 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/archives")
 @AuthorizationSwagger
 public class ArchiveController {
 
-    @Autowired
-    @Qualifier("archiveServiceImpl")
-    private ArchiveService service;
+    private final ArchiveService service;
 
     @PostMapping("/customer")
     public ResponseEntity<Void> saveArchiveCustomer(@RequestBody @Validated ArchiveRequestDTO request) {

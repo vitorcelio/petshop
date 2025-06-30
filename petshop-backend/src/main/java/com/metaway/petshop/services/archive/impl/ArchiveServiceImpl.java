@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import static com.metaway.petshop.utils.PetshopUtil.ERROR_MESSAGE;
 
-@SuppressWarnings("ALL")
 @Slf4j
 @RequiredArgsConstructor
 @Service
