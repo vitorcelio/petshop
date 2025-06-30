@@ -1,5 +1,6 @@
 package com.metaway.petshop.services.user.impl;
 
+import com.metaway.petshop.configurations.activemq.producer.ProducerJms;
 import com.metaway.petshop.configurations.exceptions.NotFoundException;
 import com.metaway.petshop.configurations.exceptions.ValidationException;
 import com.metaway.petshop.configurations.security.SecurityVerify;
@@ -9,6 +10,8 @@ import com.metaway.petshop.mappers.UserDao;
 import com.metaway.petshop.models.myBatis.RoleV2;
 import com.metaway.petshop.models.myBatis.UserV2;
 import com.metaway.petshop.services.user.UserServiceV2;
+import com.metaway.petshop.utils.JsonUtil;
+import com.metaway.petshop.utils.PetshopUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -32,6 +35,8 @@ public class UserServiceV2Impl implements UserServiceV2 {
     private final UserDao dao;
     private final RoleDao roleDao;
     private final SecurityVerify securityVerify;
+    private final ProducerJms producer;
+    private final JsonUtil jsonUtil;
 
     @Override
     public UserV2 save(UserRequestDTO request) {
@@ -46,6 +51,8 @@ public class UserServiceV2Impl implements UserServiceV2 {
             dao.save(user);
 
             log.info("Usuário salvo com sucesso!");
+
+            producer.send(PetshopUtil.CONSUMER_EMAIL, jsonUtil.toJson(user));
             return user;
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,12 +1,14 @@
-# Configurações da Aplicação Back-end do PetShop
+# ========== Configurações da Aplicação Back-end do PetShop ==========
+
 server:
   port: ${PORT:8081}
-
 
 spring:
   application:
     name: PetShop Metaway
 
+
+# Banco de dados configurações
   jpa:
     hibernate:
       ddl-auto: none
@@ -23,6 +25,7 @@ spring:
       minimum-idle: 2
       maximum-pool-size: 10
 
+
 # Flyway configurações
   flyway:
     enabled: false
@@ -30,11 +33,17 @@ spring:
     baseline-on-migrate: true
     baseline-version: 1
 
-jwt:
-  secret: QXBsaWNhw6fDo28gcGFyYSBhIG1ldGF3YXkgKFRlc3RlKSAtIFBldFNob3A=
+
+# ActiveMQ configurações
+  activemq:
+    broker-url: tcp://localhost:61616
+    user: admin
+    password: admin
+  jms:
+    pub-sub-domain: false
+
 
 # MyBatis configurações
-
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
@@ -44,6 +53,7 @@ mybatis:
   mapper-locations: classpath:mappers/*.xml
 
 
+# LOGS DA APLICAÇÃO
 logging:
   level:
     org:
@@ -52,3 +62,7 @@ logging:
         ibatis: DEBUG
 logging.level.org.apache.ibatis.cache: DEBUG
 
+
+# Variáveis de configurações do sistema:
+jwt:
+  secret: QXBsaWNhw6fDo28gcGFyYSBhIG1ldGF3YXkgKFRlc3RlKSAtIFBldFNob3A=

@@ -1,5 +1,6 @@
 package com.metaway.petshop.configurations.exceptions;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
@@ -12,14 +13,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.ArrayList;
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestControllerAdvice
 public class ExceptionGlobalHandler {
 
     private final MessageSource messageSource;
-
-    public ExceptionGlobalHandler(MessageSource messageSource) {
-        this.messageSource = messageSource;
-    }
 
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<?> handleValidationException(final ValidationException e) {
@@ -59,35 +57,4 @@ public class ExceptionGlobalHandler {
         return new ResponseEntity<>(details, HttpStatus.BAD_REQUEST);
     }
 
-    public MessageSource getMessageSource() {
-        return this.messageSource;
-    }
-
-    public boolean equals(final Object o) {
-        if (o == this) return true;
-        if (!(o instanceof ExceptionGlobalHandler)) return false;
-        final ExceptionGlobalHandler other = (ExceptionGlobalHandler) o;
-        if (!other.canEqual((Object) this)) return false;
-        final Object this$messageSource = this.getMessageSource();
-        final Object other$messageSource = other.getMessageSource();
-        if (this$messageSource == null ? other$messageSource != null : !this$messageSource.equals(other$messageSource))
-            return false;
-        return true;
-    }
-
-    protected boolean canEqual(final Object other) {
-        return other instanceof ExceptionGlobalHandler;
-    }
-
-    public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final Object $messageSource = this.getMessageSource();
-        result = result * PRIME + ($messageSource == null ? 43 : $messageSource.hashCode());
-        return result;
-    }
-
-    public String toString() {
-        return "ExceptionGlobalHandler(messageSource=" + this.getMessageSource() + ")";
-    }
 }
